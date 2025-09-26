@@ -1,21 +1,24 @@
 pipeline {
     agent any
 
-    tools {
-        python 'Python 3'              // Jenkins Global Tools config me hona chahiye
-        sonarScanner 'sonar-scanner'  // Yeh bhi Global Tools me hona chahiye
+    environment {
+        // SonarQube environment defined in Jenkins -> Configure System
+        SONARQUBE_ENV = 'My SonarQube Server'
+        PATH = "/usr/bin:${env.PATH}"  // Python & sonar-scanner path
     }
 
     stages {
-        stage('Checkout') {
+        stage('Clone') {
             steps {
-                 git branch: 'main', url: 'https://github.com/ERAPARH/Jenkins-sonar-practice' // ya local repo
+                git branch: 'main', url: 'https://github.com/ERAPARH/Jenkins-sonar-practice.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh 'pip install -r requirements.txt || true'  // agar koi req file hai
+                sh 'which python3'
+                sh 'python3 --version'
+                sh 'pip3 install -r requirements.txt || true'
             }
         }
 
@@ -27,10 +30,11 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('My SonarQube Server') {
+                withSonarQubeEnv("${env.SONARQUBE_ENV}") {
                     sh 'sonar-scanner'
                 }
             }
         }
     }
 }
+
