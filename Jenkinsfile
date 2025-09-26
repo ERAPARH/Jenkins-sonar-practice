@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/ERAPARH/Jenkins-sonar-practice' // ya local repo
+                 git branch: 'main', url: 'https://github.com/ERAPARH/Jenkins-sonar-practice' // ya local repo
             }
         }
 
