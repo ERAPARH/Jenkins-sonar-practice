@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        // SonarQube environment defined in Jenkins -> Configure System
-        SONARQUBE_ENV = 'My SonarQube Server'
-        PATH = "/usr/bin:${env.PATH}"  // Python & sonar-scanner path
+        SONARQUBE_ENV = 'My SonarQube Server'  // Jenkins me configured SonarQube server ka naam
+        SONAR_TOKEN = credentials('sonar-token2') // Jenkins credentials me token ka ID
+        PATH = "/usr/bin:/opt/sonar-scanner/bin:${env.PATH}"
     }
 
     stages {
@@ -31,7 +31,9 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv("${env.SONARQUBE_ENV}") {
-                    sh 'sonar-scanner'
+                    sh "sonar-scanner -Dsonar.projectKey=sonar-token2 -Dsonar.sources=. -Dsonar.login=${SONAR_TOKEN}"
+
+                        
                 }
             }
         }
